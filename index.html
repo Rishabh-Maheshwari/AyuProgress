@@ -14,6 +14,7 @@
             background-color: #fce4ec; /* Light pink background */
             font-family: 'Comic Sans MS', cursive, sans-serif; /* Cute font */
             color: #333;
+            overflow: hidden; /* Hide overflow to create the dropping effect */
         }
 
         .container {
@@ -71,6 +72,28 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
+        /* Glitter animation */
+        @keyframes glitter {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .glitter {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffcc00; /* Color of glitter */
+            border-radius: 50%;
+            animation: glitter 2s linear infinite;
+            animation-delay: calc(0.1s * var(--glitter-index)); /* Spread out animation delay for multiple glitters */
+        }
     </style>
 </head>
 <body>
@@ -95,7 +118,7 @@
             <div class="progress-label">0 minutes</div>
         </div>
 
-        <button class="clear-cache-btn" onclick="clearCache()">Clear Progress, Its a new day.</button>
+        <button class="clear-cache-btn" onclick="clearCache()">Clear Progress, It's a new day.</button>
     </div>
 
     <script>
@@ -137,6 +160,27 @@
             var progressPercentage = (value / (90 * 60)) * 100; // Assuming the goal is 90 minutes
             progressBarFill.style.width = progressPercentage + '%';
             progressLabel.textContent = value/60 + ' minutes';
+
+            // Check if progress reaches 90 minutes or more
+            if (value >= 90 * 60) {
+                showGlitters();
+            }
+        }
+
+        function showGlitters() {
+            // Create multiple glitters
+            for (let i = 0; i < 10; i++) {
+                var glitter = document.createElement('div');
+                glitter.classList.add('glitter');
+                glitter.style.left = Math.random() * window.innerWidth + 'px';
+                glitter.style.setProperty('--glitter-index', i);
+                document.body.appendChild(glitter);
+
+                // Remove glitter after animation ends
+                glitter.addEventListener('animationend', function() {
+                    glitter.remove();
+                });
+            }
         }
 
         function clearCache() {
