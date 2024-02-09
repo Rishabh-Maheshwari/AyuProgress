@@ -136,7 +136,7 @@
 
             var progressPercentage = (value / (90 * 60)) * 100; // Assuming the goal is 90 minutes
             progressBarFill.style.width = progressPercentage + '%';
-            progressLabel.textContent = value + ' minutes';
+            progressLabel.textContent = value/60 + ' minutes';
         }
 
         function clearCache() {
