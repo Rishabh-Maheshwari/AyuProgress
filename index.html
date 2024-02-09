@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish Progress Bar with Input</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fce4ec; /* Light pink background */
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Cute font */
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .motivational-line {
+            font-size: 18px;
+            font-style: italic;
+            color: #ff4081; /* Pink color for the line */
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            width: 300px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+
+        .progress-label {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        .clear-cache-btn {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Road to 90 mins</h1>
+        <div class="motivational-line">You can do it Ayu, I believe in you</div>
+
+        <div class="input-container">
+            <label for="minutes">Minutes:</label>
+            <input type="number" id="minutes" placeholder="Enter minutes">
+            
+            <label for="seconds">Seconds:</label>
+            <input type="number" id="seconds" placeholder="Enter seconds">
+            
+            <button onclick="updateProgress()">Submit</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-label">0 minutes</div>
+        </div>
+
+        <button class="clear-cache-btn" onclick="clearCache()">Clear Progress, Its a new day.</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize value as 0
+            var initialValue = 0;
+            // Retrieve value from cache
+            var cachedValue = localStorage.getItem('progressInput');
+            if (cachedValue) {
+                initialValue = parseInt(cachedValue, 10);
+                document.getElementById('minutes').value = Math.floor(initialValue / 60);
+                document.getElementById('seconds').value = initialValue % 60;
+            }
+            // Update progress bar
+            updateProgressBar(initialValue);
+        });
+
+        function updateProgress() {
+            var minutes = parseInt(document.getElementById('minutes').value, 10) || 0;
+            var seconds = parseInt(document.getElementById('seconds').value, 10) || 0;
+
+            // Allow negative values for minutes and seconds
+            // Convert seconds to minutes and add them together
+            var inputValue = minutes * 60 + seconds;
+
+            // Update cache by adding the new input to the existing value
+            var currentValue = parseInt(localStorage.getItem('progressInput'), 10) || 0;
+            var newValue = currentValue + inputValue;
+            localStorage.setItem('progressInput', newValue);
+
+            // Update progress bar
+            updateProgressBar(newValue);
+        }
+
+        function updateProgressBar(value) {
+            var progressBarFill = document.querySelector('.progress-fill');
+            var progressLabel = document.querySelector('.progress-label');
+
+            var progressPercentage = (value / (90 * 60)) * 100; // Assuming the goal is 90 minutes
+            progressBarFill.style.width = progressPercentage + '%';
+            progressLabel.textContent = value + ' minutes';
+        }
+
+        function clearCache() {
+            // Clear the stored value in the local storage
+            localStorage.removeItem('progressInput');
+            // Reset input fields and progress bar
+            document.getElementById('minutes').value = '';
+            document.getElementById('seconds').value = '';
+            updateProgressBar(0);
+        }
+    </script>
+</body>
+</html>
