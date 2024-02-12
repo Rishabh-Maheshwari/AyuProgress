@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stylish Progress Bar with Input</title>
+    <title>Ayu's Transcribe Progress</title>
     <style>
         body {
             display: flex;
@@ -94,6 +94,86 @@
             animation: glitter 2s linear infinite;
             animation-delay: calc(0.1s * var(--glitter-index)); /* Spread out animation delay for multiple glitters */
         }
+
+        .medals-section {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        text-align: center;
+        background-color: #F8F0E3;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .medals-section h2 {
+        margin-bottom: 10px;
+    }
+
+    .medal-image {
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        cursor: pointer;
+        border: 1px solid #ddd; /* Add border to images for better visibility */
+        border-radius: 5px;
+    }
+
+    /* Enlarged Image Modal */
+    .enlarged-image-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .enlarged-image {
+        max-width: 80%;
+        max-height: 80%;
+        cursor: pointer;
+        border-radius: 5px;
+        top: 0;
+    }
+
+    .enlarged-image-modal .close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 30px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    /* Hover on Parent Container */
+.enlarged-image-modal:hover{
+    cursor: pointer;
+}
+
+.enlarged-image-modal:hover div{
+    width: 750px;
+    padding: 8px 15px;
+    visibility: visible;
+    opacity: 0.7; 
+}
+.enlarged-image-modal div{
+    position: absolute;
+    bottom: 20%;
+    right: 30%;
+    background: black;
+    color: white;
+    margin-bottom: 5px;
+    font-family: sans-serif;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: visibility 0s, opacity 0.5s linear; 
+    transition: visibility 0s, opacity 0.5s linear;
+}
     </style>
 </head>
 <body>
@@ -119,6 +199,19 @@
         </div>
 
         <button class="clear-cache-btn" onclick="clearCache()">Clear Progress, It's a new day.</button>
+
+        <div id="medals-section" class="medals-section">
+            <h2>Ayu's Medals</h2>
+            <img src="https://i.postimg.cc/MpzjGpk5/B.png" class="medal-image" alt="Medal 1" onclick="enlargeImage(this)">
+            <!--<img src="medal2.jpg" class="medal-image" alt="Medal 2" onclick="enlargeImage(this)">
+            <img src="medal3.jpg" class="medal-image" alt="Medal 3" onclick="enlargeImage(this)">-->
+        </div>
+    </div>
+
+    <div id="enlarged-image-modal" class="enlarged-image-modal" onclick="minimizeImage()">
+        <span class="close">&times;</span>
+        <img id="enlarged-image" class="enlarged-image" alt="Enlarged Medal">
+        <div>This medal symbolizes Ayu's successful launch into the challenge, flying like a rocket to new heights!</div> 
     </div>
 
     <script>
@@ -190,6 +283,21 @@
             document.getElementById('minutes').value = '';
             document.getElementById('seconds').value = '';
             updateProgressBar(0);
+        }
+
+        function enlargeImage(image) {
+            var enlargedImageModal = document.getElementById('enlarged-image-modal');
+            var enlargedImage = document.getElementById('enlarged-image');
+
+            enlargedImage.src = image.src;
+            enlargedImage.alt = image.alt;
+
+            enlargedImageModal.style.display = 'block';
+        }
+
+        function minimizeImage() {
+            var enlargedImageModal = document.getElementById('enlarged-image-modal');
+            enlargedImageModal.style.display = 'none';
         }
     </script>
 </body>
