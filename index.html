@@ -95,6 +95,27 @@
             animation-delay: calc(0.1s * var(--glitter-index)); /* Spread out animation delay for multiple glitters */
         }
 
+        .glitter2 {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #45b3e0; /* Color of glitter */
+            border-radius: 50%;
+            animation: glitter 2s linear infinite;
+            animation-delay: calc(0.1s * var(--glitter-index)); /* Spread out animation delay for multiple glitters */
+        }
+
+        .glitter3 {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #8D6298; /* Color of glitter */
+            border-radius: 50%;
+            animation: glitter 2s linear infinite;
+            animation-delay: calc(0.1s * var(--glitter-index)); /* Spread out animation delay for multiple glitters */
+        }
+
+
         .medals-section {
         position: fixed;
         top: 20px;
@@ -174,6 +195,14 @@
     -webkit-transition: visibility 0s, opacity 0.5s linear; 
     transition: visibility 0s, opacity 0.5s linear;
 }
+  #timer {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 10px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
     </style>
 </head>
 <body>
@@ -190,6 +219,11 @@
             
             <button onclick="updateProgress()">Submit</button>
         </div>
+
+        <div id="timer">Time left to complete this recording : 00:00:00</div>
+
+        <div id="rec">Number of recordings completed : <span class="rec-data">0</span></div>
+
 
         <div class="progress-container">
             <div class="progress-bar">
@@ -220,22 +254,93 @@
             var initialValue = 0;
             // Retrieve value from cache
             var cachedValue = localStorage.getItem('progressInput');
+            var cachedTargetTimer = localStorage.getItem('deadlineTime');
+            var cachedRecCount = localStorage.getItem('numberOfRec');
+            if(cachedTargetTimer){
+              const targetEndTime = new Date(cachedTargetTimer);
+              startTimer(targetEndTime);
+            }
             if (cachedValue) {
                 initialValue = parseInt(cachedValue, 10);
                 document.getElementById('minutes').value = Math.floor(initialValue / 60);
                 document.getElementById('seconds').value = initialValue % 60;
             }
+            if (cachedRecCount) {
+                initialValueCount = parseInt(cachedRecCount);
+                var recElement = document.querySelector('.rec-data');
+                recElement.textContent = (cachedRecCount);
+            }
             // Update progress bar
             updateProgressBar(initialValue);
         });
+
+        function getTimeRemaining(endTime) {
+          const totalSeconds = Math.floor((endTime - new Date()) / 1000);
+          const hours = Math.floor(totalSeconds / 3600);
+          const minutes = Math.floor((totalSeconds % 3600) / 60);
+          const seconds = totalSeconds % 60;
+
+          return { hours, minutes, seconds };
+        }
+
+        function updateTimerDisplay(timeRemaining) {
+          const timerElement = document.getElementById('timer');
+          timerElement.textContent = `Time left to complete this recording :: ${formatTime(timeRemaining.hours)}:${formatTime(timeRemaining.minutes)}:${formatTime(timeRemaining.seconds)}`;
+        }
+
+        function formatTime(value) {
+          return value < 10 ? `0${value}` : value;
+        }
+
+        let updateTimeout;
+        function startTimer(endTime) {
+          clearTimeout(updateTimeout);
+          function update() {
+            const timeRemaining = getTimeRemaining(endTime);
+            updateTimerDisplay(timeRemaining);
+
+            var cachedTargetTimer = localStorage.getItem('deadlineTime');
+
+            if (timeRemaining.hours <= 0 && timeRemaining.minutes <= 0 && timeRemaining.seconds <= 0) {
+              clearTimeout(updateTimeout);
+              alert("Timer expired!");
+            } else if(cachedTargetTimer){
+              updateTimeout = setTimeout(update, 1000); // Update every 1 second
+            }else{
+              const timerElement = document.getElementById('timer');
+              timerElement.textContent = "";
+              clearTimeout(updateTimeout);
+            }
+        }
+
+    update(); // Initial update
+  }
 
         function updateProgress() {
             var minutes = parseInt(document.getElementById('minutes').value, 10) || 0;
             var seconds = parseInt(document.getElementById('seconds').value, 10) || 0;
 
+            const targetEndTime = new Date();
+            targetEndTime.setMinutes(targetEndTime.getMinutes() + minutes*4);
+            targetEndTime.setSeconds(targetEndTime.getSeconds() + seconds);
+            localStorage.setItem('deadlineTime', targetEndTime.toString());
+
+            
+
             // Allow negative values for minutes and seconds
             // Convert seconds to minutes and add them together
             var inputValue = minutes * 60 + seconds;
+
+            if(inputValue>0){
+              let numberOfRec = parseInt(localStorage.getItem('numberOfRec')) || 0;
+              if(numberOfRec==null){
+                numberOfRec=0;
+              }
+              numberOfRec++;
+              localStorage.setItem('numberOfRec', numberOfRec.toString());
+              var recElement = document.querySelector('.rec-data');
+              recElement.textContent = numberOfRec.toString();
+            }
 
             // Update cache by adding the new input to the existing value
             var currentValue = parseInt(localStorage.getItem('progressInput'), 10) || 0;
@@ -244,6 +349,7 @@
 
             // Update progress bar
             updateProgressBar(newValue);
+            startTimer(targetEndTime);
         }
 
         function updateProgressBar(value) {
@@ -262,9 +368,33 @@
 
         function showGlitters() {
             // Create multiple glitters
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 20; i++) {
                 var glitter = document.createElement('div');
                 glitter.classList.add('glitter');
+                glitter.style.left = Math.random() * window.innerWidth + 'px';
+                glitter.style.setProperty('--glitter-index', i);
+                document.body.appendChild(glitter);
+
+                // Remove glitter after animation ends
+                glitter.addEventListener('animationend', function() {
+                    glitter.remove();
+                });
+            }
+            for (let i = 0; i < 20; i++) {
+                var glitter = document.createElement('div');
+                glitter.classList.add('glitter2');
+                glitter.style.left = Math.random() * window.innerWidth + 'px';
+                glitter.style.setProperty('--glitter-index', i);
+                document.body.appendChild(glitter);
+
+                // Remove glitter after animation ends
+                glitter.addEventListener('animationend', function() {
+                    glitter.remove();
+                });
+            }
+            for (let i = 0; i < 20; i++) {
+                var glitter = document.createElement('div');
+                glitter.classList.add('glitter3');
                 glitter.style.left = Math.random() * window.innerWidth + 'px';
                 glitter.style.setProperty('--glitter-index', i);
                 document.body.appendChild(glitter);
@@ -279,10 +409,14 @@
         function clearCache() {
             // Clear the stored value in the local storage
             localStorage.removeItem('progressInput');
+            localStorage.removeItem('deadlineTime');
+            localStorage.removeItem('numberOfRec');
             // Reset input fields and progress bar
             document.getElementById('minutes').value = '';
             document.getElementById('seconds').value = '';
             updateProgressBar(0);
+            var recElement = document.querySelector('.rec-data');
+            recElement.textContent = 0;
         }
 
         function enlargeImage(image) {
